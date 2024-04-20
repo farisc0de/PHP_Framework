@@ -1,38 +1,29 @@
 <?php
 
-/**
- * Front controller
- *
- * PHP version 7.0
- */
+declare(strict_types=1);
 
-/**
- * Composer
- */
-require dirname(__DIR__) . '/vendor/autoload.php';
+define("ROOT_PATH", dirname(__DIR__));
 
+require ROOT_PATH . "/vendor/autoload.php";
 
-/**
- * Error and Exception handling
- */
-error_reporting(E_ALL);
-set_error_handler('Core\Error::errorHandler');
-set_exception_handler('Core\Error::exceptionHandler');
+$dotenv = Dotenv\Dotenv::createImmutable(ROOT_PATH);
 
+$dotenv->load();
 
-/**
- * Sessions
- */
-session_start();
+set_error_handler("Framework\ErrorHandler::handleError");
 
+set_exception_handler("Framework\ErrorHandler::handleException");
 
-/**
- * Routing
- */
-$router = new Core\Router();
+$router = require ROOT_PATH . "/config/routes.php";
 
-// Add the routes
-$router->add('', ['controller' => 'Home', 'action' => 'index']);
-$router->add('{controller}/{action}');
-    
-$router->dispatch($_SERVER['QUERY_STRING']);
+$container = require ROOT_PATH . "/config/services.php";
+
+$middleware = require ROOT_PATH . "/config/middleware.php";
+
+$dispatcher = new Framework\Dispatcher($router, $container, $middleware);
+
+$request = Framework\Request::createFromGlobals();
+
+$response = $dispatcher->handle($request);
+
+$response->send();

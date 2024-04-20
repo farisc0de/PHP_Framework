@@ -1,11 +1,16 @@
 {
     "require": {
-        "twig/twig": "~3.0"
+        "php-di/php-di": "^7.0",
+        "filp/whoops": "^2.15",
+        "twig/twig": "^3.8",
+        "farisc0de/phpfileuploading": "^1.0",
+        "vlucas/phpdotenv": "^5.6",
+        "lulco/phoenix": "^2.5"
     },
     "autoload": {
         "psr-4": {
-            "Core\\": "Core/",
-            "App\\": "App/"
+            "App\\": "src/app/",
+            "Framework\\": "src/framework/"
         }
     }
 }
